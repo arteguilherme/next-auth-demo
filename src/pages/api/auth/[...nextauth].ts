@@ -1,8 +1,8 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import NextAuth from "next-auth"
-import GithubProvider from "next-auth/providers/github"
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import NextAuth from "next-auth";
+import GithubProvider from "next-auth/providers/github";
 
-import prisma from "../../../lib/prisma"
+import prisma from "../../../lib/prisma";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -17,43 +17,41 @@ export const authOptions = {
           userName: profile.login,
           email: profile.email,
           image: profile.avatar_url,
-        }
+        };
       },
-
     }),
     // ...add more providers here
   ],
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
-    callbacks: {
+  callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      const isAllowedToSignIn = true
+      const isAllowedToSignIn = true;
 
       if (isAllowedToSignIn) {
-        return true
+        return true;
       } else {
         // Return false to display a default error message
-        return false
+        return false;
         // Or you can return a URL to redirect to:
         // return '/unauthorized'
       }
-
     },
     session: ({ session, user, token }) => ({
       ...session,
       use: {
         ...session.user,
         id: user.id,
-        userName: user.userName
-      }
+        userName: user.userName,
+      },
     }),
     async redirect({ url, baseUrl }) {
-      return baseUrl
+      return baseUrl;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      return token
-    }
-}
-}
+      return token;
+    },
+  },
+};
 
-export default NextAuth(authOptions)
+export default NextAuth(authOptions);
